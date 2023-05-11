@@ -20,6 +20,12 @@ div.generated-text {
     text-align: center;
     font-size: 18px;
 }
+
+div.Requirement-text {
+    font-size: 16px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
 """
 
 # Streamlitアプリのレイアウト設定
@@ -33,7 +39,7 @@ selected_grade = st.selectbox("目指したい等級を選択してください"
 st.subheader(f"{selected_grade} の等級要件")
 requirements = grade_requirements[selected_grade]
 for key, value in requirements.items():
-    st.write(f"{key}: {value}")
+    st.markdown(f'<div class="Requirement-text">{key}: {value}</div>', unsafe_allow_html=True)
 
 # 各要件に対する実績を入力する
 st.subheader(f"{selected_grade} の実績入力")
