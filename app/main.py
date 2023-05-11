@@ -34,9 +34,9 @@ if st.button("自己評価文章を生成"):
     with st.spinner("自己評価文章を生成中..."):
         # OpenAI APIを使って自己評価文章を生成
         response = openai.Completion.create(
-            engine="gpt-3.5-turbo",
+            model="gpt-3.5-turbo",
             prompt=f"以下の実績を元に、自己評価を証明する文章を生成してください。\n\n実績:\n{user_input}\n\n自己評価文章:",
-            temperature=0.1,
+            temperature=0.3,
             max_tokens=1000,
             top_p=1,
             frequency_penalty=0,
