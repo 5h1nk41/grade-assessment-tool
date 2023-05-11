@@ -32,7 +32,7 @@ if st.button("自己評価文章を生成"):
         # OpenAI APIを使って自己評価文章を生成
         response = openai.Completion.create(
             engine="text-davinci-003",
-            prompt=f"以下の実績を元に、自己評価を証明する文章を生成してください。\n\n実績:\n{user_achievements}\n\n自己評価文章:",
+            prompt=f"以下の実績を元に、自己評価を証明する文章を生成してください。各実績ごとに等級要件の何をを満たしているか、補足してください。\n\n実績:\n{user_achievements}\n\n自己評価文章:",
             temperature=0.3,
             max_tokens=1000,
             top_p=1,
