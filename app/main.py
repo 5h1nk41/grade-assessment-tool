@@ -41,7 +41,21 @@ if st.button("自己評価文章を生成"):
         )
 
     generated_text = response.choices[0].text.strip()
-    st.write(generated_text)
+    
+    # 自己評価文章を出力するエリア
+    st.markdown(
+        f"""
+        <div style='
+            background-color: #F5F5F5;
+            padding: 20px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 18px;
+        '>{generated_text}</div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     # 生成された自己評価文章が等級要件を満たすか判断
     grade_met = None
