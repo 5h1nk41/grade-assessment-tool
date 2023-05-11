@@ -1,6 +1,6 @@
 import openai
 
-openai.api_key = "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"
+openai.api_key = "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"
 
 def generate_self_evaluation(achievement_points, model="text-davinci-003"):
     prompt = f"実績の要点: {achievement_points}\n自己評価: "
