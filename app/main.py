@@ -8,13 +8,12 @@ def assess_performance(performance, requirement):
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=prompt,
-        max_tokens=10,
+        max_tokens=1000,
         n=1,
         stop=None,
         temperature=0.5,
     )
-    answer = response.choices[0].text.strip().lower()
-    return answer == "はい"
+    return response.choices[0].text.strip()
 
 # Streamlit secretsから環境変数を読み込む
 try:
@@ -65,8 +64,4 @@ for requirement in grade_requirements[selected_grade]:
             with st.spinner("判定中..."):
                 # ここで実績と要件を比較して判定を行う
                 result = assess_performance(performance[requirement], grade_requirements[selected_grade][requirement])
-
-                if result:
-                    st.success(f"{requirement} は達成されました。")
-                else:
-                    st.error(f"{requirement} は達成されていません。")
+                st.write(result)
