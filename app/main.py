@@ -60,42 +60,5 @@ for key, value in requirements_met.items():
     else:
         st.markdown(f"{key}: **要件を満たしていません**")
 
-# 自己評価文章を生成する
-if st.button("自己評価文章を生成"):
-    with st.spinner("自己評価文章を生成中..."):
-        # OpenAI APIを使って文章を生成
-        response = openai.Completion.create(
-            engine="text-davinci-003",
-            prompt=f"以下の実績を元に、自己評価を証明する文章を生成してください。各実績ごとに等級要件の何をを満たしているか、補足してください。\n\n実績:\n{user_achievements}\n\n自己評価文章:",
-            temperature=0.5,
-            max_tokens=1000,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0,
-        )
-        if not response.choices:
-            st.error("自己評価文章を生成できませんでした。")
-            st.stop()
-
-        generated_text = response.choices[0].text.strip()
-
-    # 生成された自己評価文章が等級要件を満たすか判断
-    grade_met = None
-    reason = None
-    for grade, requirements in grade_requirements.items():
-        met_requirements = all(req in generated_text for req in requirements.values())
-        if met_requirements:
-            grade_met = grade
-            reason = f"生成された自己評価文章は{grade_met}の要件を満たしています。"
-            break
-        else:
-            reason = "生成された自己評価文章は、対象となる等級の要件を満たしていません。"
-
-    # 判定結果と理由を表示
-    st.success(reason)
-
-    # 生成された自己評価文章を表示
-    st.subheader("自己評価文章")
-    st.write(generated_text)
 
 
