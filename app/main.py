@@ -12,12 +12,13 @@ except KeyError:
 
 # grade_requirementsをStreamlit secretsから読み込む
 try:
+    grade_requirements_raw = st.secrets["grade_requirements"]
+    grade_requirements_raw_dict = toml.loads(grade_requirements_raw)
     grade_requirements = {}
-    for grade, requirements in grade_requirements_raw.items():
+    for grade, requirements in grade_requirements_raw_dict.items():
         grade_requirements[grade] = {
             key: value for key, value in requirements.items()
         }
-
 except KeyError:
     st.error("grade_requirementsが設定されていません。")
     st.stop()
