@@ -10,7 +10,7 @@ openai_api_key = st.secrets["openai_api_key"]
 grade_requirements = st.secrets["grade_requirements"]
 
 # Streamlitアプリのレイアウト設定
-st.title("自己評価ツール")
+st.title("自己評価作成アシスタントツール")
 
 # 目標等級を選択する
 selected_grade = st.selectbox("目指したい等級を選択してください", list(grade_requirements.keys()))
