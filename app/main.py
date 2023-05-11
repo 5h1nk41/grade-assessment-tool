@@ -9,9 +9,6 @@ openai_api_key = st.secrets["openai_api_key"]
 # grade_requirementsをStreamlit secretsから読み込む
 grade_requirements = st.secrets["grade_requirements"]
 
-# OpenAI APIの設定
-openai.api_key = openai_api_key
-
 # Streamlitアプリのレイアウト設定
 st.title("自己評価ツール")
 
