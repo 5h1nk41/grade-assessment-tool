@@ -14,6 +14,23 @@ openai.api_key = openai_api_key
 
 # Streamlitアプリのレイアウト設定
 st.title("自己評価ツール")
+
+# 目標等級を選択する
+selected_grade = st.selectbox("目指したい等級を選択してください", list(grade_requirements.keys()))
+
+# 選択された等級の要件を表示する
+st.subheader(f"{selected_grade} の等級要件")
+requirements = grade_requirements[selected_grade]
+for key, value in requirements.items():
+    st.write(f"{key}: {value}")
+
+# 各要件に対する実績を入力する
+st.subheader(f"{selected_grade} の実績入力")
+user_achievements = {}
+for key in requirements.keys():
+    user_achievements[key] = st.text_area(f"{key} の実績を入力してください", "")
+
+# 実績の要点を入力
 user_input = st.text_area("実績の要点を入力してください:")
 
 if st.button("自己評価文章を生成"):
