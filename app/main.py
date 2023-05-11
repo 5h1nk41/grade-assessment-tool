@@ -4,9 +4,8 @@ import openai
 import streamlit as st
 
 # TOMLファイルから環境変数を読み込む
-config = toml.load("config.toml")
-grade_requirements = config["grade_requirements"]
-openai_api_key = config["openai_api_key"]
+grade_requirements = os.environ["grade_requirements"]
+openai_api_key = os.environ["openai_api_key"]
 
 # OpenAI APIの設定
 openai.api_key = openai_api_key
