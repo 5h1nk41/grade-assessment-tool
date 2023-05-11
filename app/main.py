@@ -3,6 +3,19 @@ import toml
 import openai
 import streamlit as st
 
+def assess_performance(performance, requirement):
+    prompt = f"実績: {performance}\n要件: {requirement}\nこの実績は要件を満たしていますか？"
+    response = openai.Completion.create(
+        engine="text-davinci-002",
+        prompt=prompt,
+        max_tokens=10,
+        n=1,
+        stop=None,
+        temperature=0.5,
+    )
+    answer = response.choices[0].text.strip().lower()
+    return answer == "はい"
+
 # Streamlit secretsから環境変数を読み込む
 try:
     openai.api_key = st.secrets["openai_api_key"]
@@ -57,21 +70,3 @@ for requirement in grade_requirements[selected_grade]:
                     st.success(f"{requirement} は達成されました。")
                 else:
                     st.error(f"{requirement} は達成されていません。")
-
-def assess_performance(performance_text, requirement_text):
-    prompt = f"以下の実績が、要件に達成しているか評価してください。\n\n要件:\n{requirement_text}\n\n実績:\n{performance_text}\n\n達成している場合は「達成」と、達成していない場合は「未達成」と回答してください。"
-
-    response = openai.Completion.create(
-        engine="text-davinci-002",
-        prompt=prompt,
-        max_tokens=100,
-        n=1,
-        stop=None,
-        temperature=0.5,
-    )
-
-    result_text = response.choices[0].text.strip()
-    if result_text == "達成":
-        return True
-    else:
-        return False
