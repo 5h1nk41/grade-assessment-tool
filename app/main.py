@@ -21,9 +21,15 @@ div.generated-text {
     font-size: 18px;
 }
 
-div.Requirement-text {
-    font-size: 16px;
+div.Requirement-block {
+    background-color: #F5F5F5;
+    padding: 10px;
     margin-bottom: 10px;
+    border-radius: 5px;
+}
+div.Requirement-block h5 {
+    margin-top: 0;
+    margin-bottom: 5px;
     font-weight: bold;
 }
 """
