@@ -4,7 +4,7 @@ import openai
 import streamlit as st
 
 # Streamlit secretsから環境変数を読み込む
-openai_api_key = st.secrets["openai_api_key"]
+openai.api_key = st.secrets["openai_api_key"]
 
 # grade_requirementsをStreamlit secretsから読み込む
 grade_requirements = st.secrets["grade_requirements"]
