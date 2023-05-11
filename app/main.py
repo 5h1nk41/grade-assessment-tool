@@ -1,5 +1,5 @@
 import os
-import json
+import toml
 import streamlit as st
 from utils import generate_self_evaluation, check_requirements
 
