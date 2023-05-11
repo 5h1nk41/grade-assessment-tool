@@ -59,22 +59,22 @@ for requirement in grade_requirements[selected_grade]:
                     st.error(f"{requirement} は達成されていません。")
 
 def assess_performance(performance_text, requirement_text):
-    prompt = f"以下の実績が要件を満たしているか判断してください。\n\n要件:\n{requirement_text}\n\n実績:\n{performance_text}\n\n要件を満たしている場合は「達成」、満たしていない場合は「未達成」と回答してください。回答の理由も添えてください。"
+    prompt = f"以下の実績が、要件に達成しているか評価してください。\n\n要件:\n{requirement_text}\n\n実績:\n{performance_text}\n\n達成している場合は「達成」と、達成していない場合は「未達成」と回答してください。"
 
-                    response = openai.Completion.create(
-                    engine="text-davinci-003",
-                    prompt=prompt,
-                    max_tokens=1000,
-                    n=1,
-                    stop=None,
-                    temperature=0.5,
-                )
+    response = openai.Completion.create(
+        engine="text-davinci-002",
+        prompt=prompt,
+        max_tokens=100,
+        n=1,
+        stop=None,
+        temperature=0.5,
+    )
 
-                result_text = response.choices[0].text.strip()
-                if result_text == "達成":
-                    return True
-                else:
-                    return False
+    result_text = response.choices[0].text.strip()
+    if result_text == "達成":
+        return True
+    else:
+        return False
 
 # 要件判定ボタン
 assessment_results = {}
