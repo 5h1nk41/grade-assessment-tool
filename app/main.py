@@ -75,20 +75,3 @@ def assess_performance(performance_text, requirement_text):
         return True
     else:
         return False
-
-# 要件判定ボタン
-assessment_results = {}
-for requirement in grade_requirements[selected_grade]:
-    if st.button(f"{requirement} の判定を実行", key=f"assessment_{requirement}"):
-
-        if not performance[requirement]:
-            st.error(f"{requirement} の実績が入力されていません。")
-        else:
-            with st.spinner("判定中..."):
-                # ここで実績と要件を比較して判定を行う
-                result = assess_performance(performance[requirement], grade_requirements[selected_grade][requirement])
-
-                if result:
-                    st.success(f"{requirement} は達成されました。")
-                else:
-                    st.error(f"{requirement} は達成されていません。")
