@@ -17,7 +17,6 @@ except KeyError:
     st.error("grade_requirementsが設定されていません。")
     st.stop()
 
-
 # スタイルシートを追加
 STYLE = """
 .Requirement-text {
@@ -83,32 +82,34 @@ if st.button("自己評価文章を生成"):
     with st.spinner("自己評価文章を生成中..."):
         # OpenAI APIを使って文章を生成
         response = openai.Completion.create(
-        engine="davinci",
-        prompt=f"以下の実績を元に、自己評価を証明する文章を生成してください。各実績ごとに等級要件の何をを満たしているか、補足してください。\n\n実績:\n{user_achievements}\n\n自己評価文章:",
-        temperature=0.5,
-        max_tokens=1000,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0,
-    )
+            engine="davinci",
+            prompt=f"以下の実績を元に、自己評価を証明する文章を生成してください。各実績ごとに等級要件の何をを満たしているか、補足してください。\n\n実績:\n{user_achievements}\n\n自己評価文章:",
+            temperature=0.5,
+            max_tokens=1000,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0,
+        )
 
-generated_text = response.choices[0].text.strip()
+        if not response.choices:
+            st.error("自己評価文章を生成できませんでした。")
+            st.stop()
 
-# スタイルシートを適用して自己評価文章を出力する
-st.markdown(STYLE, unsafe_allow_html=True)
-st.markdown(f'<div class="generated-text">{generated_text}</div>', unsafe_allow_html=True)
+        generated_text = response.choices[0].text.strip()
 
-# 生成された自己評価文章が等級要件を満たすか判断
-grade_met = None
-for grade, requirements in grade_requirements.items():
-    met_requirements = all(req in generated_text for req in requirements.values())
-    if met_requirements:
-        grade_met = grade
-        break
+    # スタイルシートを適用して自己評価文章を出力する
+    st.markdown(STYLE, unsafe_allow_html=True)
+    st.markdown(f'<div class="generated-text">{generated_text}</div>', unsafe_allow_html=True)
 
-if grade_met:
-    st.success(f"生成された自己評価文章は{grade_met}の要件を満たしています。")
-else:
-    st.warning("生成された自己評価文章は、対象となる等級の要件を満たしていません。")
+    # 生成された自己評価文章が等級要件を満たすか判断
+    grade_met = None
+    for grade, requirements in grade_requirements.items():
+        met_requirements = all(req in generated_text for req in requirements.values())
+        if met_requirements:
+            grade_met = grade
+            break
 
-
+    if grade_met:
+        st.success(f"生成された自己評価文章は{grade_met}の要件を満たしています。")
+    else:
+        st.warning("生成された自己評価文章は、対象となる等級の要件を満たしていません。")
