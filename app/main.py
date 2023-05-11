@@ -9,7 +9,21 @@ openai.api_key = st.secrets["openai_api_key"]
 # grade_requirementsをStreamlit secretsから読み込む
 grade_requirements = st.secrets["grade_requirements"]
 
+
+# スタイルシートを追加
+STYLE = """
+div.generated-text {
+    background-color: #F5F5F5;
+    padding: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 18px;
+}
+"""
+
 # Streamlitアプリのレイアウト設定
+st.set_page_config(page_title="自己評価作成アシスタントツール")
 st.title("自己評価作成アシスタントツール")
 
 # 目標等級を選択する
@@ -33,7 +47,7 @@ if st.button("自己評価文章を生成"):
         response = openai.Completion.create(
             engine="text-davinci-003",
             prompt=f"以下の実績を元に、自己評価を証明する文章を生成してください。各実績ごとに等級要件の何をを満たしているか、補足してください。\n\n実績:\n{user_achievements}\n\n自己評価文章:",
-            temperature=0.3,
+            temperature=0.5,
             max_tokens=1000,
             top_p=1,
             frequency_penalty=0,
@@ -41,21 +55,10 @@ if st.button("自己評価文章を生成"):
         )
 
     generated_text = response.choices[0].text.strip()
-    
-    # 自己評価文章を出力するエリア
-    st.markdown(
-        f"""
-        <div style='
-            background-color: #F5F5F5;
-            padding: 20px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 18px;
-        '>{generated_text}</div>
-        """,
-        unsafe_allow_html=True,
-    )
+
+    # スタイルシートを適用して自己評価文章を出力する
+    st.markdown(STYLE, unsafe_allow_html=True)
+    st.markdown(f'<div class="generated-text">{generated_text}</div>', unsafe_allow_html=True)
 
     # 生成された自己評価文章が等級要件を満たすか判断
     grade_met = None
