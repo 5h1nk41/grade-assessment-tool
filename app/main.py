@@ -31,16 +31,17 @@ for key in requirements.keys():
 user_input = st.text_area("実績の要点を入力してください:")
 
 if st.button("自己評価文章を生成"):
-    # OpenAI APIを使って自己評価文章を生成
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=f"以下の実績を元に、自己評価を証明する文章を生成してください。\n\n実績:\n{user_input}\n\n自己評価文章:",
-        temperature=0.5,
-        max_tokens=1000,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0,
-    )
+    with st.spinner("自己評価文章を生成中..."):
+        # OpenAI APIを使って自己評価文章を生成
+        response = openai.Completion.create(
+            engine="text-davinci-003",
+            prompt=f"以下の実績を元に、自己評価を証明する文章を生成してください。\n\n実績:\n{user_input}\n\n自己評価文章:",
+            temperature=0.5,
+            max_tokens=1000,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0,
+        )
 
     generated_text = response.choices[0].text.strip()
     st.write(generated_text)
