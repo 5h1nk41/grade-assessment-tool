@@ -12,7 +12,7 @@ except KeyError:
 
 # grade_requirementsをStreamlit secretsから読み込む
 try:
-    grade_requirements = st.secrets["grade_requirements"]
+    grade_requirements = toml.loads(st.secrets["grade_requirements"])
 except KeyError:
     st.error("grade_requirementsが設定されていません。")
     st.stop()
@@ -22,10 +22,6 @@ st.set_page_config(page_title="自己評価作成アシスタントツール")
 st.title("自己評価作成アシスタントツール")
 
 # 目標等級を選択する
-if "grade_requirements" not in locals():
-    st.error("grade_requirementsが設定されていません。")
-    st.stop()
-
 selected_grade = st.selectbox("目指したい等級を選択してください", list(grade_requirements.keys()))
 
 # 選択された等級の要件を表示する
@@ -48,35 +44,56 @@ for key in requirements.keys():
         st.stop()
     user_achievements[key] = user_input
 
+# 各要件が実績を満たしているか判定する
+requirements_met = {}
+for key, value in requirements.items():
+    if value in user_achievements[key]:
+        requirements_met[key] = True
+    else:
+        requirements_met[key] = False
 
+# 各要件の判定結果を表示する
+st.subheader(f"{selected_grade} の判定結果")
+for key, value in requirements_met.items():
+    if value:
+        st.markdown(f"{key}: **要件を満たしています**")
+    else:
+        st.markdown(f"{key}: **要件を満たしていません**")
+
+# 自己評価文章を生成する
 if st.button("自己評価文章を生成"):
     with st.spinner("自己評価文章を生成中..."):
         # OpenAI APIを使って文章を生成
         response = openai.Completion.create(
-            engine="text-davinci-003",
-            prompt=f"以下の実績を元に、自己評価を証明する文章を生成してください。各実績ごとに等級要件の何をを満たしているか、補足してください。\n\n実績:\n{user_achievements}\n\n自己評価文章:",
-            temperature=0.5,
-            max_tokens=1000,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0,
+        engine="text-davinci-003",
+        prompt=f"以下の実績を元に、自己評価を証明する文章を生成してください。各実績ごとに等級要件の何をを満たしているか、補足してください。\n\n実績:\n{user_achievements}\n\n自己評価文章:",
+        temperature=0.5,
+        max_tokens=1000,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
         )
-
         if not response.choices:
-            st.error("自己評価文章を生成できませんでした。")
-            st.stop()
+        st.error("自己評価文章を生成できませんでした。")
+        st.stop()
 
-        generated_text = response.choices[0].text.strip()
+    generated_text = response.choices[0].text.strip()
 
-    # 生成された自己評価文章が等級要件を満たすか判断
-    grade_met = None
-    for grade, requirements in grade_requirements.items():
-        met_requirements = all(req in generated_text for req in requirements.values())
-        if met_requirements:
-            grade_met = grade
-            break
-
-    if grade_met:
-        st.success(f"生成された自己評価文章は{grade_met}の要件を満たしています。")
+# 生成された自己評価文章が等級要件を満たすか判断
+grade_met = None
+reason = None
+for grade, requirements in grade_requirements.items():
+    met_requirements = all(req in generated_text for req in requirements.values())
+    if met_requirements:
+        grade_met = grade
+        reason = f"生成された自己評価文章は{grade_met}の要件を満たしています。"
+        break
     else:
-        st.warning("生成された自己評価文章は、対象となる等級の要件を満たしていません。")
+        reason = "生成された自己評価文章は、対象となる等級の要件を満たしていません。"
+
+# 判定結果と理由を表示
+st.success(reason)
+
+# 生成された自己評価文章を表示
+st.subheader("自己評価文章")
+st.write(generated_text)
