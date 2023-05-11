@@ -3,12 +3,11 @@ import toml
 import openai
 import streamlit as st
 
-# 環境変数から設定を読み込む
-openai_api_key = os.environ["openai_api_key"]
+# Streamlit secretsから環境変数を読み込む
+openai_api_key = st.secrets["openai_api_key"]
 
-# TOMLファイルから等級要件を読み込む
-config = toml.loads(os.environ["grade_requirements"])
-grade_requirements = config["grade_requirements"]
+# grade_requirementsをStreamlit secretsから読み込む
+grade_requirements = st.secrets["grade_requirements"]
 
 # OpenAI APIの設定
 openai.api_key = openai_api_key
