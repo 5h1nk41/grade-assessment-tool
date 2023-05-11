@@ -4,7 +4,7 @@ import openai
 import streamlit as st
 
 def assess_performance(performance, requirement):
-    prompt = f"実績: {performance}\n要件: {requirement}\nこの実績は要件を満たしているか判定してください。判定結果の根拠を簡単に説明してください。"
+    prompt = f"実績: {performance}\n要件: {requirement}\nこの実績は要件を満たしているか判定してください。実績のサマリと要件も同時に出力してください。判定結果の根拠を簡単に説明してください。"
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=prompt,
