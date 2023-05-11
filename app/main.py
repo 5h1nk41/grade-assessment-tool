@@ -12,12 +12,12 @@ except KeyError:
 
 # grade_requirementsをStreamlit secretsから読み込む
 try:
-    grade_requirements_raw = st.secrets["grade_requirements"]
     grade_requirements = {}
     for grade, requirements in grade_requirements_raw.items():
         grade_requirements[grade] = {
-            f'requirement{i}': req for i, req in enumerate(requirements.values(), 1)
+            key: value for key, value in requirements.items()
         }
+
 except KeyError:
     st.error("grade_requirementsが設定されていません。")
     st.stop()
