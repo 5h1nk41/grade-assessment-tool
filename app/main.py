@@ -1,6 +1,5 @@
 import os
 import toml
-from openai import OpenAI
 import openai
 import streamlit as st
 
