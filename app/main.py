@@ -5,7 +5,7 @@ from utils import generate_self_evaluation, check_requirements
 
 # 環境変数から等級要件を読み込む
 grade_requirements_str = os.environ.get("GRADE_REQUIREMENTS")
-grade_requirements = toml.loads(grade_requirements_str)
+grade_requirements = toml.loads(str(grade_requirements_str))
 
 st.title("自己評価ツール")
 
