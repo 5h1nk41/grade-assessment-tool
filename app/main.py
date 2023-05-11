@@ -27,15 +27,12 @@ user_achievements = {}
 for key in requirements.keys():
     user_achievements[key] = st.text_area(f"{key} の実績を入力してください", "")
 
-# 実績の要点を入力
-user_input = st.text_area("実績の要点を入力してください:")
-
 if st.button("自己評価文章を生成"):
     with st.spinner("自己評価文章を生成中..."):
         # OpenAI APIを使って自己評価文章を生成
         response = openai.Completion.create(
-            model="gpt-3.5-turbo",
-            prompt=f"以下の実績を元に、自己評価を証明する文章を生成してください。\n\n実績:\n{user_input}\n\n自己評価文章:",
+            engine="text-davinci-003",
+            prompt=f"以下の実績を元に、自己評価を証明する文章を生成してください。\n\n実績:\n{user_achievements}\n\n自己評価文章:",
             temperature=0.3,
             max_tokens=1000,
             top_p=1,
