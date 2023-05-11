@@ -2,7 +2,6 @@ import os
 import toml
 import openai
 import streamlit as st
-import pyperclip
 
 # Streamlit secretsから環境変数を読み込む
 try:
