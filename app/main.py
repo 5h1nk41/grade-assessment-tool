@@ -7,7 +7,7 @@ def generate_self_evaluation(performance, requirement):
     performance_list = "\n".join([f"- {key}: {value}" for key, value in performance.items()])
     requirement_list = "\n".join([f"- {key}: {value}" for key, value in requirement.items()])
 
-    prompt = f"実績: {performance_list}\n要件: {requirement_list}\nこの実績に基づいて、納得感のある自己評価を生成し、等級要件を満たしているか判定してください。判定結果の根拠を論理的に説明し、満たしていない場合は達成のためのアドバイスを提供してください。"
+    prompt = f"実績: {performance_list}\n要件: {requirement_list}\n以下の実績に基づいて、自己評価の証明をするような納得感のある文章を生成してください。\n\n実績:\n{performance_list}\n\n要件:\n{requirement_list}\n\n自己評価文章:"
 
     response = openai.Completion.create(
         engine="text-davinci-003",
