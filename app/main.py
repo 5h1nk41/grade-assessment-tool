@@ -3,8 +3,12 @@ import toml
 import openai
 import streamlit as st
 
-def generate_self_evaluation(performance, grade_requirements):
-    prompt = f"実績: {performance}\n要件: {grade_requirements}\n自己評価の証明をするような納得感のある文章を生成し、等級要件を満たしているか判定してください。判定結果のロジックを説明し、満たしていない場合は、どのような実績を積み上げれば達成できるのかアドバイスを提供してください。"
+def generate_self_evaluation(performance, requirement):
+    performance_list = "\n".join([f"- {key}: {value}" for key, value in performance.items()])
+    requirement_list = "\n".join([f"- {key}: {value}" for key, value in requirement.items()])
+
+    prompt = f"実績: {performance_list}\n要件: {requirement_list}\nこの実績に基づいて、納得感のある自己評価を生成し、等級要件を満たしているか判定してください。判定結果の根拠を論理的に説明し、満たしていない場合は達成のためのアドバイスを提供してください。"
+
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=prompt,
@@ -12,18 +16,6 @@ def generate_self_evaluation(performance, grade_requirements):
         n=1,
         stop=None,
         temperature=0.5,
-    )
-    return response.choices[0].text.strip()
-
-def assess_performance(performance, requirement):
-    prompt = f"実績: {performance}\n要件: {requirement}\nこの実績は要件を満たしているか多角的な視点で厳しく判定してください。判定結果の根拠を論理的に説明してください。"
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
-        max_tokens=1000,
-        n=1,
-        stop=None,
-        temperature=0.1,
     )
     return response.choices[0].text.strip()
 
@@ -73,3 +65,5 @@ if st.button("自己評価を生成して判定を実行"):
             # ここで実績をまとめ、自己評価の証明をするような文章を生成し、等級要件を満たしているか判定する
             result = generate_self_evaluation({selected_requirement: performance}, {selected_requirement: grade_requirements[selected_grade][selected_requirement]})
             st.write(result)
+            st.subheader("生成された自己評価文章")
+            st.write(result.split("\n")[0])  # 生成された文章を取り出して表示する
