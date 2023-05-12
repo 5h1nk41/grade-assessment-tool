@@ -56,21 +56,20 @@ selected_grade = st.selectbox("評価対象の等級を選択してください"
 # 選択された等級の要件を表示
 st.header(f"{selected_grade}の要件")
 selected_requirement = st.selectbox("選択したい要件を選んでください", list(grade_requirements[selected_grade].keys()))
+st.subheader(selected_requirement)
+st.write(grade_requirements[selected_grade][selected_requirement])
 
 # 実績入力
 st.header("実績入力")
-performance = {}
-for requirement in grade_requirements[selected_grade]:
-    performance[requirement] = st.text_area(f"{requirement} の実績を入力してください。", height=100)
+performance = st.text_area(f"{selected_requirement} の実績を入力してください。", height=100)
 
 # 要件判定ボタン
 if st.button("自己評価を生成して判定を実行"):
 
-    missing_inputs = [req for req, value in performance.items() if not value]
-    if missing_inputs:
-        st.error(f"{', '.join(missing_inputs)} の実績が入力されていません。")
+    if not performance:
+        st.error(f"{selected_requirement} の実績が入力されていません。")
     else:
         with st.spinner("判定中..."):
             # ここで実績をまとめ、自己評価の証明をするような文章を生成し、等級要件を満たしているか判定する
-            result = generate_self_evaluation(performance, grade_requirements[selected_grade])
+            result = generate_self_evaluation({selected_requirement: performance}, {selected_requirement: grade_requirements[selected_grade][selected_requirement]})
             st.write(result)
