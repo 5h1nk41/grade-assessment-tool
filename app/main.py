@@ -45,26 +45,24 @@ st.title("自己評価作成アシスタントツール")
 # ドロップダウンメニューで評価対象の等級を選択
 selected_grade = st.selectbox("評価対象の等級を選択してください", list(grade_requirements.keys()))
 
-# 選択された等級の要件を表示
-st.header(f"{selected_grade}の要件")
-selected_requirement = st.selectbox("選択したい要件を選んでください", list(grade_requirements[selected_grade].keys()))
-st.subheader(selected_requirement)
+# ドロップダウンメニューで評価対象の要件を選択
+selected_requirement = st.selectbox("評価対象の要件を選択してください", list(grade_requirements[selected_grade].keys()))
+
+# 選択された要件の内容を表示
+st.header(f"{selected_requirement} の要件")
 st.write(grade_requirements[selected_grade][selected_requirement])
 
 # 実績入力
 st.header("実績入力")
 performance = st.text_area(f"{selected_requirement} の実績を入力してください。", height=100)
 
-# 要件判定ボタン
-if st.button("自己評価を生成して判定を実行"):
-
+# 自己評価文章生成
+if st.button("自己評価文章を生成"):
     if not performance:
         st.error(f"{selected_requirement} の実績が入力されていません。")
     else:
-        with st.spinner("判定中..."):
-            # ここで実績をまとめ、自己評価の証明をするような文章を生成し、等級要件を満たしているか判定する
+        with st.spinner("文章生成中..."):
             result = generate_self_evaluation({selected_requirement: performance}, {selected_requirement: grade_requirements[selected_grade][selected_requirement]})
-            st.write(result)
             st.subheader("生成された自己評価文章")
             split_result = result.split("\n自己評価文章:")
             if len(split_result) > 1:
@@ -72,5 +70,13 @@ if st.button("自己評価を生成して判定を実行"):
             else:
                 self_evaluation_text = "自己評価文章が生成されませんでした。"
             st.write(self_evaluation_text)
+
+# 要件判定ボタン
+if st.button("要件判定を実行"):
+    if not performance:
+        st.error(f"{selected_requirement} の実績が入力されていません。")
+    else:
+        with st.spinner("判定中..."):
+            result = assess_performance(performance, grade_requirements[selected_grade][selected_requirement])
             st.subheader("判定結果")
-            st.write(split_result[0].strip())  # 判定結果を取り出して表示する
+            st.write(result)
