@@ -55,6 +55,7 @@ st.write(grade_requirements[selected_grade][selected_requirement])
 st.header("実績入力")
 performance = st.text_area(f"{selected_requirement} の実績を入力してください。", height=100)
 
+# 要件判定ボタン
 if st.button("自己評価を生成して判定を実行"):
 
     if not performance:
@@ -65,7 +66,11 @@ if st.button("自己評価を生成して判定を実行"):
             result = generate_self_evaluation({selected_requirement: performance}, {selected_requirement: grade_requirements[selected_grade][selected_requirement]})
             st.write(result)
             st.subheader("生成された自己評価文章")
-            self_evaluation_text = result.split("\n自己評価文章:")[1].strip()  # 生成された文章を取り出して表示する
+            split_result = result.split("\n自己評価文章:")
+            if len(split_result) > 1:
+                self_evaluation_text = split_result[1].strip()  # 生成された文章を取り出して表示する
+            else:
+                self_evaluation_text = "自己評価文章が生成されませんでした。"
             st.write(self_evaluation_text)
             st.subheader("判定結果")
-            st.write(result.split("\n自己評価文章:")[0].strip())  # 判定結果を取り出して表示する
+            st.write(split_result[0].strip())  # 判定結果を取り出して表示する
