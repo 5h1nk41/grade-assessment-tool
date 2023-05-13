@@ -2,6 +2,7 @@ import os
 import toml
 import openai
 import streamlit as st
+from streamlit import components
 
 # 実績から自己評価の文章をAIで生成
 def generate_self_evaluation(performance, requirement):
@@ -19,7 +20,7 @@ def generate_self_evaluation(performance, requirement):
         max_tokens=1000,
         n=1,
         stop=None,
-        temperature=0.5,
+        temperature=0.7,
     )
     
     return response.choices[0].text.strip()
@@ -57,6 +58,9 @@ except KeyError:
     st.error("grade_requirementsが設定されていません。")
     st.stop()
 
+import streamlit as st
+from streamlit import components
+
 # Streamlitアプリのレイアウト設定
 st.set_page_config(page_title="自己評価作成アシスタントツール")
 st.title("自己評価作成アシスタントツール")
@@ -80,7 +84,6 @@ generated_evaluation = ""
 # Placeholder
 evaluation_placeholder = st.empty()
 result_placeholder = st.empty()
-assessment_button_placeholder = st.empty()
 
 # 自己評価文章生成
 if st.button("自己評価文章を生成"):
@@ -96,7 +99,10 @@ if st.button("自己評価文章を生成"):
                 evaluation_placeholder.write(generated_evaluation)
 
                 # Display the assessment button
-                if assessment_button_placeholder.button("要件判定を実行"):
+                if st.button("自己評価文章を生成しなおす"):
+                    evaluation_placeholder.empty()
+
+                if st.button("要件判定を実行"):
                     with st.spinner("判定中..."):
                         result = assess_performance(generated_evaluation, grade_requirements[selected_grade][selected_requirement])
                         # Update the placeholder with the assessment result
