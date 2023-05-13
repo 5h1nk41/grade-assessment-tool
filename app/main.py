@@ -11,7 +11,7 @@ def generate_self_evaluation(performance, requirement):
     performance_lines = performance.split("\n")
     performance_list = "\n".join([f"- {line}" for line in performance_lines])
 
-    prompt = f"以下の実績に基づいて、自己評価の証明をする文章を生成してください。実績と要件を繋げるだけの文章は避けてください。要点をまとめ、論理的な構成に補完してください。\n\n実績:\n{performance_list}\n\n要件:\n{requirement_list}\n\n自己評価文章:"
+    prompt = f"以下の実績に基づいて、自己評価の証明をする文章を生成してください。実績と要件を繋げるだけの文章は避けてください。実績から推察される価値をまとめ、論理的な構成になるよう文章を考えてください。\n\n実績:\n{performance_list}\n\n要件:\n{requirement_list}\n\n自己評価文章:"
 
     response = openai.Completion.create(
         engine="text-davinci-003",
@@ -80,6 +80,7 @@ generated_evaluation = ""
 # Placeholder
 evaluation_placeholder = st.empty()
 result_placeholder = st.empty()
+assessment_button_placeholder = st.empty()
 
 # 自己評価文章生成
 if st.button("自己評価文章を生成"):
@@ -94,6 +95,14 @@ if st.button("自己評価文章を生成"):
                 evaluation_placeholder.subheader("生成された自己評価文章")
                 evaluation_placeholder.write(generated_evaluation)
                 evaluation_input.value = generated_evaluation
+
+                # Display the assessment button
+                if assessment_button_placeholder.button("要件判定を実行"):
+                    with st.spinner("判定中..."):
+                        result = assess_performance(evaluation_input.value, grade_requirements[selected_grade][selected_requirement])
+                        # Update the placeholder with the assessment result
+                        result_placeholder.subheader("判定結果")
+                        result_placeholder.write(result)
             else:
                 st.write("自己評価文章が生成されませんでした。")
 
