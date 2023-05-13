@@ -84,9 +84,11 @@ generated_evaluation = ""
 # Placeholder
 evaluation_placeholder = st.empty()
 result_placeholder = st.empty()
+generate_button_placeholder = st.empty()
+regenerate_button_placeholder = st.empty()
 
 # 自己評価文章生成
-if st.button("自己評価文章を生成"):
+if generate_button_placeholder.button("自己評価文章を生成"):
     if not performance:
         st.error(f"{selected_requirement} の実績が入力されていません。")
     else:
@@ -98,9 +100,12 @@ if st.button("自己評価文章を生成"):
                 evaluation_placeholder.subheader("生成された自己評価文章")
                 evaluation_placeholder.write(generated_evaluation)
 
-                # Display the assessment button
-                if st.button("自己評価文章を生成しなおす"):
+                generate_button_placeholder.empty()
+
+                if regenerate_button_placeholder.button("自己評価文章を生成しなおす"):
                     evaluation_placeholder.empty()
+                    regenerate_button_placeholder.empty()
+                    generate_button_placeholder.button("自己評価文章を生成")
 
                 if st.button("要件判定を実行"):
                     with st.spinner("判定中..."):
