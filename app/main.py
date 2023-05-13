@@ -17,6 +17,7 @@ def generate_self_evaluation(performance, requirement):
         stop=["\n", "自己評価文章:"],
         temperature=0.5,
     )
+    return response.choices[0].text.strip()
     
 def assess_performance(performance, requirement):
     prompt = f"以下の実績と要件を比較し、実績が要件を満たしているかどうか判断してください。\n\n実績:\n- {performance}\n\n要件:\n- {requirement}\n\n判断:"
