@@ -7,6 +7,10 @@ def generate_self_evaluation(performance, requirement):
     performance_list = "\n".join([f"- {key}: {value}" for key, value in performance.items()])
     requirement_list = "\n".join([f"- {key}: {value}" for key, value in requirement.items()])
 
+    # 実績をリストに変換
+    performance_lines = performance.split("\n")
+    performance_list = "\n".join([f"- {line}" for line in performance_lines])
+
     prompt = f"以下の実績に基づいて、自己評価の証明をするような納得感のある文章を生成してください。\n\n実績:\n{performance_list}\n\n要件:\n{requirement_list}\n\n自己評価文章:"
 
     response = openai.Completion.create(
