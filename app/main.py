@@ -3,6 +3,7 @@ import toml
 import openai
 import streamlit as st
 
+# 実績から自己評価の文章をAIで生成
 def generate_self_evaluation(performance, requirement):
     requirement_list = "\n".join([f"- {key}: {value}" for key, value in requirement.items()])
 
@@ -20,8 +21,14 @@ def generate_self_evaluation(performance, requirement):
         stop=["\n", "自己評価文章:"],
         temperature=0.5,
     )
-    return response.choices[0].text.strip()
     
+    # ログ出力
+    st.write(f"Prompt: {prompt}")
+    st.write(f"Response: {response}")
+    
+    return response.choices[0].text.strip()
+
+# 自己評価の文章と等級要件を照らし合わせ、AIで等級要件を満たしているか判定
 def assess_performance(performance, requirement):
     prompt = f"以下の実績と要件を比較し、実績が要件を満たしているかどうか判断してください。\n\n実績:\n- {performance}\n\n要件:\n- {requirement}\n\n判断:"
 
