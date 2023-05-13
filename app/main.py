@@ -133,7 +133,6 @@ if st.session_state.generated_evaluation:
             st.session_state.generated_evaluation = generate_evaluation(performance, {selected_requirement: grade_requirements[selected_grade][selected_requirement]})
                     
     if st.button("要件判定を実行"):
-        st.write(f"Debug: generated_evaluation: {st.session_state.generated_evaluation}")
         with st.spinner("判定中..."):
             result = assess_performance(st.session_state.generated_evaluation, grade_requirements[selected_grade][selected_requirement])
             # Update the placeholder with the assessment result
