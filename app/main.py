@@ -4,7 +4,6 @@ import openai
 import streamlit as st
 
 def generate_self_evaluation(performance, requirement):
-    performance_list = "\n".join([f"- {key}: {value}" for key, value in performance.items()])
     requirement_list = "\n".join([f"- {key}: {value}" for key, value in requirement.items()])
 
     # 実績をリストに変換
@@ -79,7 +78,7 @@ if st.button("自己評価文章を生成"):
         st.error(f"{selected_requirement} の実績が入力されていません。")
     else:
         with st.spinner("文章生成中..."):
-            result = generate_self_evaluation({selected_requirement: performance}, {selected_requirement: grade_requirements[selected_grade][selected_requirement]})
+            result = generate_self_evaluation(performance, {selected_requirement: grade_requirements[selected_grade][selected_requirement]})
             st.subheader("生成された自己評価文章")
             if result:
                 st.write(result.strip())
