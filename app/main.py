@@ -11,7 +11,7 @@ def generate_self_evaluation(performance, requirement):
     performance_lines = performance.split("\n")
     performance_list = "\n".join([f"- {line}" for line in performance_lines])
 
-    prompt = f"以下の実績に基づいて、自己評価の証明をするような納得感のある文章を生成してください。\n\n実績:\n{performance_list}\n\n要件:\n{requirement_list}\n\n自己評価文章:"
+    prompt = f"以下の実績に基づいて、自己評価の証明をする文章を生成してください。実績と要件を繋げるだけの文章は避けてください。要点をまとめ、論理的な構成に補完してください。\n\n実績:\n{performance_list}\n\n要件:\n{requirement_list}\n\n自己評価文章:"
 
     response = openai.Completion.create(
         engine="text-davinci-003",
@@ -22,15 +22,11 @@ def generate_self_evaluation(performance, requirement):
         temperature=0.5,
     )
     
-    # ログ出力
-    st.write(f"Prompt: {prompt}")
-    st.write(f"Response: {response}")
-    
     return response.choices[0].text.strip()
 
 # 自己評価の文章と等級要件を照らし合わせ、AIで等級要件を満たしているか判定
 def assess_performance(performance, requirement):
-    prompt = f"以下の実績と要件を比較し、実績が要件を満たしているかどうか判断してください。\n\n実績:\n- {performance}\n\n要件:\n- {requirement}\n\n判断:"
+    prompt = f"自己評価の文章と要件を比較し、要件を満たしているかどうか多角的に厳しく判断してください。\n\n実績:\n- {performance}\n\n要件:\n- {requirement}\n\n判断:"
 
     response = openai.Completion.create(
         engine="text-davinci-003",
@@ -38,7 +34,7 @@ def assess_performance(performance, requirement):
         max_tokens=1000,
         n=1,
         stop=None,
-        temperature=0.5,
+        temperature=0.1,
     )
     return response.choices[0].text.strip()
 
@@ -93,15 +89,15 @@ if st.button("自己評価文章を生成"):
 
 # 実績入力
 st.header("自己評価文章")
-evaluation_input = st.text_area("生成された自己評価文章がここに表示されます。", value=generated_evaluation, height=100)
+evaluation_input = st.text_area("生成された自己評価文章がここに表示されます", value=generated_evaluation, height=100)
 
 # 要件判定ボタン
 if st.button("要件判定を実行"):
-    if not evaluation_input:
-        st.error("自己評価文章が入力されていません。")
+    if not generated_evaluation:  # この行を修正
+        st.error(f"{selected_requirement} の自己評価文章が入力されていません。")
     else:
         with st.spinner("判定中..."):
-            result = assess_performance(evaluation_input, grade_requirements[selected_grade][selected_requirement])
+            result = assess_performance(generated_evaluation, grade_requirements[selected_grade][selected_requirement])  # この行を修正
             st.subheader("判定結果")
             st.write(result)
 
