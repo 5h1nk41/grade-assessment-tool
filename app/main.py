@@ -14,11 +14,10 @@ def generate_self_evaluation(performance, requirement):
         prompt=prompt,
         max_tokens=1000,
         n=1,
-        stop=["\n"],
+        stop=["\n", "自己評価文章:"],
         temperature=0.5,
     )
-    return response.choices[0].text.strip()
-
+    
 def assess_performance(performance, requirement):
     performance_list = "\n".join([f"- {key}: {value}" for key, value in performance.items()])
     requirement_list = "\n".join([f"- {key}: {value}" for key, value in requirement.items()])
@@ -28,10 +27,10 @@ def assess_performance(performance, requirement):
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=prompt,
-        max_tokens=50,
+        max_tokens=1000,
         n=1,
         stop=None,
-        temperature=0.5,
+        temperature=0.3,
     )
     return response.choices[0].text.strip()
 
