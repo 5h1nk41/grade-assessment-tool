@@ -81,9 +81,13 @@ st.write(grade_requirements[selected_grade][selected_requirement])
 st.header("実績入力")
 performance = st.text_area(f"{selected_requirement} の実績を入力してください。", height=100)
 
+generated_evaluation = ""
+
 # Placeholder
 evaluation_placeholder = st.empty()
 result_placeholder = st.empty()
+generate_button_placeholder = st.empty()
+regenerate_button_placeholder = st.empty()
 
 # セッションステートの初期化
 if "generated_evaluation" not in st.session_state:
@@ -94,6 +98,23 @@ if "show_generate_button" not in st.session_state:
 
 if "show_regenerate_button" not in st.session_state:
     st.session_state.show_regenerate_button = False
+
+evaluation_placeholder = st.empty()
+result_placeholder = st.empty()
+
+# generate_evaluation関数の定義
+def generate_evaluation(performance, requirements):
+    with st.spinner("文章生成中..."):
+        result = generate_self_evaluation(performance, requirements)
+        if result:
+            generated_evaluation = result.strip()
+            # Update the placeholder with the generated evaluation
+            evaluation_placeholder.subheader("生成された自己評価文章")
+            evaluation_placeholder.write(generated_evaluation)
+            return generated_evaluation
+        else:
+            st.write("自己評価文章が生成されませんでした。")
+            return None
 
 # 自己評価文章生成
 if st.session_state.show_generate_button:
