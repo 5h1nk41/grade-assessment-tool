@@ -2,7 +2,6 @@ import os
 import toml
 import openai
 import streamlit as st
-from streamlit import components
 
 # 実績から自己評価の文章をAIで生成
 def generate_self_evaluation(performance, requirement):
@@ -24,8 +23,8 @@ def generate_self_evaluation(performance, requirement):
     )
     
     # ログ出力
-    # st.write(f"Prompt: {prompt}")
-    # st.write(f"Response: {response}")
+    st.write(f"Prompt: {prompt}")
+    st.write(f"Response: {response}")
     
     return response.choices[0].text.strip()
 
@@ -59,7 +58,7 @@ try:
             key: value for key, value in requirements.items()
         }
 except KeyError:
-    st.error("grade_requirementsが設定されていません。")
+        st.error("grade_requirementsが設定されていません。")
     st.stop()
 
 # Streamlitアプリのレイアウト設定
@@ -80,24 +79,7 @@ st.write(grade_requirements[selected_grade][selected_requirement])
 st.header("実績入力")
 performance = st.text_area(f"{selected_requirement} の実績を入力してください。", height=100)
 
-# コピー機能用のJavaScript
-copy_js = """
-<div style="position: relative;">
-    <textarea id="copy-text" style="width: 100%; height: 100px;" readonly></textarea>
-    <button id="copy-button" style="position: absolute; top: 0; right: 0;">Copy</button>
-</div>
-<script>
-    const copyButton = document.querySelector("#copy-button");
-    const copyText = document.querySelector("#copy-text");
-    
-    function copyToClipboard() {
-        copyText.select();
-        document.execCommand("copy");
-    }
-    
-    copyButton.addEventListener("click", copyToClipboard);
-</script>
-"""
+generated_evaluation = ""
 
 # 自己評価文章生成
 if st.button("自己評価文章を生成"):
@@ -105,24 +87,21 @@ if st.button("自己評価文章を生成"):
         st.error(f"{selected_requirement} の実績が入力されていません。")
     else:
         with st.spinner("文章生成中..."):
-            result = generate_self_evaluation(performance, {selected_requirement: grade_requirements[selected_grade][selected_requirement]})
-            st.subheader("生成された自己評価文章")
-            if result:
-                # コピー機能付きのテキストエリアに生成された自己評価文章を表示
-                components.html(copy_js.replace("<!--REPLACE_ME-->", result.strip()), height=150)
-            else:
+            generated_evaluation = generate_self_evaluation(performance, {selected_requirement: grade_requirements[selected_grade][selected_requirement]})
+            if not generated_evaluation:
                 st.write("自己評価文章が生成されませんでした。")
-            
-# 評価文章入力
-st.header("自己評価文章入力")
-evaluation_text = st.text_area("生成された自己評価文章を入力してください。", height=100)
+
+# 実績入力
+st.header("自己評価文章")
+evaluation_input = st.text_area("生成された自己評価文章がここに表示されます。", value=generated_evaluation, height=100)
 
 # 要件判定ボタン
 if st.button("要件判定を実行"):
-    if not evaluation_text:
+    if not evaluation_input:
         st.error("自己評価文章が入力されていません。")
     else:
         with st.spinner("判定中..."):
-            result = assess_performance(evaluation_text, grade_requirements[selected_grade][selected_requirement])
+            result = assess_performance(evaluation_input, grade_requirements[selected_grade][selected_requirement])
             st.subheader("判定結果")
             st.write(result)
+
