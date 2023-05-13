@@ -87,31 +87,37 @@ result_placeholder = st.empty()
 generate_button_placeholder = st.empty()
 regenerate_button_placeholder = st.empty()
 
+def generate_evaluation(performance, requirements):
+    with st.spinner("文章生成中..."):
+        result = generate_self_evaluation(performance, requirements)
+        if result:
+            generated_evaluation = result.strip()
+            # Update the placeholder with the generated evaluation
+            evaluation_placeholder.subheader("生成された自己評価文章")
+            evaluation_placeholder.write(generated_evaluation)
+            return generated_evaluation
+        else:
+            st.write("自己評価文章が生成されませんでした。")
+            return None
+
 # 自己評価文章生成
 if generate_button_placeholder.button("自己評価文章を生成"):
     if not performance:
         st.error(f"{selected_requirement} の実績が入力されていません。")
     else:
-        with st.spinner("文章生成中..."):
-            result = generate_self_evaluation(performance, {selected_requirement: grade_requirements[selected_grade][selected_requirement]})
-            if result:
-                generated_evaluation = result.strip()
-                # Update the placeholder with the generated evaluation
-                evaluation_placeholder.subheader("生成された自己評価文章")
-                evaluation_placeholder.write(generated_evaluation)
+        generated_evaluation = generate_evaluation(performance, {selected_requirement: grade_requirements[selected_grade][selected_requirement]})
+        if generated_evaluation:
+            generate_button_placeholder.empty()
 
-                generate_button_placeholder.empty()
-
-                if regenerate_button_placeholder.button("自己評価文章を生成しなおす"):
-                    evaluation_placeholder.empty()
-                    regenerate_button_placeholder.empty()
-                    generate_button_placeholder.button("自己評価文章を生成")
-
-                if st.button("要件判定を実行"):
-                    with st.spinner("判定中..."):
-                        result = assess_performance(generated_evaluation, grade_requirements[selected_grade][selected_requirement])
-                        # Update the placeholder with the assessment result
-                        result_placeholder.subheader("判定結果")
-                        result_placeholder.write(result)
-            else:
-                st.write("自己評価文章が生成されませんでした。")
+            if regenerate_button_placeholder.button("自己評価文章を生成しなおす"):
+                evaluation_placeholder.empty()
+                regenerate_button_placeholder.empty()
+                generated_evaluation = generate_evaluation(performance, {selected_requirement: grade_requirements[selected_grade][selected_requirement]})
+                
+            if st.button("要件判定を実行"):
+                st.write(f"Debug: generated_evaluation: {generated_evaluation}")
+                with st.spinner("判定中..."):
+                    result = assess_performance(generated_evaluation, grade_requirements[selected_grade][selected_requirement])
+                    # Update the placeholder with the assessment result
+                    result_placeholder.subheader("判定結果")
+                    result_placeholder.write(result)
