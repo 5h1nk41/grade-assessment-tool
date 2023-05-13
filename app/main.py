@@ -61,6 +61,8 @@ except KeyError:
 import streamlit as st
 from streamlit import components
 
+import streamlit as st
+
 # Streamlitアプリのレイアウト設定
 st.set_page_config(page_title="自己評価作成アシスタントツール")
 st.title("自己評価作成アシスタントツール")
