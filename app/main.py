@@ -85,7 +85,6 @@ if st.button("自己評価文章を生成"):
                 st.write(result.strip())
             else:
                 st.write("自己評価文章が生成されませんでした。")
-
             
 # 要件判定ボタン
 if st.button("要件判定を実行"):
