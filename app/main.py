@@ -94,27 +94,13 @@ if st.button("自己評価文章を生成"):
                 # Update the placeholder with the generated evaluation
                 evaluation_placeholder.subheader("生成された自己評価文章")
                 evaluation_placeholder.write(generated_evaluation)
-                evaluation_input.value = generated_evaluation
 
                 # Display the assessment button
                 if assessment_button_placeholder.button("要件判定を実行"):
                     with st.spinner("判定中..."):
-                        result = assess_performance(evaluation_input.value, grade_requirements[selected_grade][selected_requirement])
+                        result = assess_performance(generated_evaluation, grade_requirements[selected_grade][selected_requirement])
                         # Update the placeholder with the assessment result
                         result_placeholder.subheader("判定結果")
                         result_placeholder.write(result)
             else:
                 st.write("自己評価文章が生成されませんでした。")
-
-# 要件判定ボタン
-if st.button("要件判定を実行"):
-    if not evaluation_input.value:
-        st.error("自己評価文章が入力されていません。")
-    else:
-        with st.spinner("判定中..."):
-            result = assess_performance(evaluation_input.value, grade_requirements[selected_grade][selected_requirement])
-            # Update the placeholder with the assessment result
-            result_placeholder.subheader("判定結果")
-            result_placeholder.write(result)
-
-
