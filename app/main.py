@@ -12,7 +12,7 @@ def generate_self_evaluation(performance, requirement):
     performance_lines = performance.split("\n")
     performance_list = "\n".join([f"- {line}" for line in performance_lines])
 
-    prompt = f"以下の実績に基づいて、自己評価の証明をする文章を生成してください。実績と要件を繋げるだけの文章は避けてください。実績から推察される価値をまとめ、論理的な構成になるよう文章を考えてください。\n\n実績:\n{performance_list}\n\n要件:\n{requirement_list}\n\n自己評価文章:"
+    prompt = f"以下の実績に基づいて、自己評価の証明をする端的な文章を生成してください。実績と要件を繋げるだけの文章は避けてください。実績から推察される価値をまとめ、論理的な構成になるよう文章を考えてください。\n\n実績:\n{performance_list}\n\n要件:\n{requirement_list}\n\n自己評価文章:"
 
     response = openai.Completion.create(
         engine="text-davinci-003",
@@ -20,14 +20,14 @@ def generate_self_evaluation(performance, requirement):
         max_tokens=1000,
         n=1,
         stop=None,
-        temperature=0.7,
+        temperature=0.5,
     )
     
     return response.choices[0].text.strip()
 
 # 自己評価の文章と等級要件を照らし合わせ、AIで等級要件を満たしているか判定
 def assess_performance(performance, requirement):
-    prompt = f"自己評価の文章と要件を比較し、要件を満たしているかどうか多角的に厳しく判断してください。\n\n実績:\n- {performance}\n\n要件:\n- {requirement}\n\n判断:"
+    prompt = f"自己評価の文章と要件を比較し、要件を満たしているか多角的に判断してください。判断は非常に厳しくしてください。判断結果のロジックを説明してください。\n\n自己評価:\n- {performance}\n\n要件:\n- {requirement}\n\n判断:"
 
     response = openai.Completion.create(
         engine="text-davinci-003",
@@ -35,7 +35,7 @@ def assess_performance(performance, requirement):
         max_tokens=1000,
         n=1,
         stop=None,
-        temperature=0.1,
+        temperature=0.5,
     )
     return response.choices[0].text.strip()
 
@@ -81,46 +81,36 @@ st.write(grade_requirements[selected_grade][selected_requirement])
 st.header("実績入力")
 performance = st.text_area(f"{selected_requirement} の実績を入力してください。", height=100)
 
-generated_evaluation = ""
-
 # Placeholder
 evaluation_placeholder = st.empty()
 result_placeholder = st.empty()
-generate_button_placeholder = st.empty()
-regenerate_button_placeholder = st.empty()
 
 # セッションステートの初期化
 if "generated_evaluation" not in st.session_state:
     st.session_state.generated_evaluation = ""
 
-evaluation_placeholder = st.empty()
-result_placeholder = st.empty()
+if "show_generate_button" not in st.session_state:
+    st.session_state.show_generate_button = True
 
-def generate_evaluation(performance, requirements):
-    with st.spinner("文章生成中..."):
-        result = generate_self_evaluation(performance, requirements)
-        if result:
-            generated_evaluation = result.strip()
-            # Update the placeholder with the generated evaluation
-            evaluation_placeholder.subheader("生成された自己評価文章")
-            evaluation_placeholder.write(generated_evaluation)
-            return generated_evaluation
-        else:
-            st.write("自己評価文章が生成されませんでした。")
-            return None
+if "show_regenerate_button" not in st.session_state:
+    st.session_state.show_regenerate_button = False
 
 # 自己評価文章生成
-if st.button("自己評価文章を生成"):
-    if not performance:
-        st.error(f"{selected_requirement} の実績が入力されていません。")
-    else:
-        st.session_state.generated_evaluation = generate_evaluation(performance, {selected_requirement: grade_requirements[selected_grade][selected_requirement]})
+if st.session_state.show_generate_button:
+    if st.button("自己評価文章を生成"):
+        if not performance:
+            st.error(f"{selected_requirement} の実績が入力されていません。")
+        else:
+            st.session_state.generated_evaluation = generate_evaluation(performance, {selected_requirement: grade_requirements[selected_grade][selected_requirement]})
+            st.session_state.show_generate_button = False
+            st.session_state.show_regenerate_button = True
 
 if st.session_state.generated_evaluation:
-    if st.button("自己評価文章を生成しなおす"):
-        evaluation_placeholder.empty()
-        st.session_state.generated_evaluation = generate_evaluation(performance, {selected_requirement: grade_requirements[selected_grade][selected_requirement]})
-                
+    if st.session_state.show_regenerate_button:
+        if st.button("自己評価文章を生成しなおす"):
+            evaluation_placeholder.empty()
+            st.session_state.generated_evaluation = generate_evaluation(performance, {selected_requirement: grade_requirements[selected_grade][selected_requirement]})
+                    
     if st.button("要件判定を実行"):
         st.write(f"Debug: generated_evaluation: {st.session_state.generated_evaluation}")
         with st.spinner("判定中..."):
