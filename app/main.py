@@ -19,10 +19,7 @@ def generate_self_evaluation(performance, requirement):
     )
     
 def assess_performance(performance, requirement):
-    performance_list = "\n".join([f"- {key}: {value}" for key, value in performance.items()])
-    requirement_list = "\n".join([f"- {key}: {value}" for key, value in requirement.items()])
-
-    prompt = f"以下の実績と要件を比較し、実績が要件を満たしているかどうか判断してください。\n\n実績:\n{performance_list}\n\n要件:\n{requirement_list}\n\n判断:"
+    prompt = f"以下の実績と要件を比較し、実績が要件を満たしているかどうか判断してください。\n\n実績:\n- {performance}\n\n要件:\n- {requirement}\n\n判断:"
 
     response = openai.Completion.create(
         engine="text-davinci-003",
@@ -30,7 +27,7 @@ def assess_performance(performance, requirement):
         max_tokens=1000,
         n=1,
         stop=None,
-        temperature=0.3,
+        temperature=0.5,
     )
     return response.choices[0].text.strip()
 
