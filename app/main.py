@@ -4,16 +4,7 @@ import openai
 import streamlit as st
 from streamlit import components
 
-# 実績から自己評価の文章をAIで生成
-def generate_self_evaluation(performance, requirement):
-    requirement_list = "\n".join([f"- {key}: {value}" for key, value in requirement.items()])
-
-    # 実績をリストに変換
-    performance_lines = performance.split("\n")
-    performance_list = "\n".join([f"- {line}" for line in performance_lines])
-
-    prompt = f"以下の実績に基づいて、自己評価の証明をする端的な文章を生成してください。実績と要件を繋げるだけの文章は避けてください。実績から推察される価値をまとめ、論理的な構成になるよう文章を考えてください。\n\n実績:\n{performance_list}\n\n要件:\n{requirement_list}\n\n自己評価文章:"
-
+def generate_ai_response(prompt):
     response = openai.Completion.create(
         engine="text-davinci-003",
         prompt=prompt,
@@ -22,22 +13,20 @@ def generate_self_evaluation(performance, requirement):
         stop=None,
         temperature=0.1,
     )
-    
     return response.choices[0].text.strip()
+
+# 実績から自己評価の文章をAIで生成
+def generate_self_evaluation(performance, requirement):
+    requirement_list = "\n".join([f"- {key}: {value}" for key, value in requirement.items()])
+    performance_lines = performance.split("\n")
+    performance_list = "\n".join([f"- {line}" for line in performance_lines])
+    prompt = f"以下の実績に基づいて、自己評価の証明をする端的な文章を生成してください。実績と要件を繋げるだけの文章は避けてください。実績から推察される価値をまとめ、論理的な構成になるよう文章を考えてください。\n\n実績:\n{performance_list}\n\n要件:\n{requirement_list}\n\n自己評価文章:"
+    return generate_ai_response(prompt)
 
 # 自己評価の文章と等級要件を照らし合わせ、AIで等級要件を満たしているか判定
 def assess_performance(performance, requirement):
     prompt = f"自己評価の文章と要件を比較し、要件を満たしているか多角的に判断してください。判断は非常に厳しくしてください。判断結果のロジックを説明してください。\n\n自己評価:\n- {performance}\n\n要件:\n- {requirement}\n\n判断:"
-
-    response = openai.Completion.create(
-        engine="text-davinci-003",
-        prompt=prompt,
-        max_tokens=1000,
-        n=1,
-        stop=None,
-        temperature=0.1,
-    )
-    return response.choices[0].text.strip()
+    return generate_ai_response(prompt)
 
 # Streamlit secretsから環境変数を読み込む
 try:
@@ -57,11 +46,6 @@ try:
 except KeyError:
     st.error("grade_requirementsが設定されていません。")
     st.stop()
-
-import streamlit as st
-from streamlit import components
-
-import streamlit as st
 
 # Streamlitアプリのレイアウト設定
 st.set_page_config(page_title="自己評価作成アシスタントツール")
@@ -128,9 +112,9 @@ if st.session_state.generated_evaluation:
             st.session_state.generated_evaluation = generate_evaluation(performance, {selected_requirement: grade_requirements[selected_grade][selected_requirement]})
                     
     if st.button("要件判定を実行"):
-        st.write(f"Debug: generated_evaluation: {st.session_state.generated_evaluation}")
         with st.spinner("判定中..."):
             result = assess_performance(st.session_state.generated_evaluation, grade_requirements[selected_grade][selected_requirement])
             # Update the placeholder with the assessment result
             result_placeholder.subheader("判定結果")
             result_placeholder.write(result)
+
