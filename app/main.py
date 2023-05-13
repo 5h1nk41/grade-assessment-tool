@@ -89,6 +89,13 @@ result_placeholder = st.empty()
 generate_button_placeholder = st.empty()
 regenerate_button_placeholder = st.empty()
 
+# セッションステートの初期化
+if "generated_evaluation" not in st.session_state:
+    st.session_state.generated_evaluation = ""
+
+evaluation_placeholder = st.empty()
+result_placeholder = st.empty()
+
 def generate_evaluation(performance, requirements):
     with st.spinner("文章生成中..."):
         result = generate_self_evaluation(performance, requirements)
@@ -103,24 +110,21 @@ def generate_evaluation(performance, requirements):
             return None
 
 # 自己評価文章生成
-if generate_button_placeholder.button("自己評価文章を生成"):
+if st.button("自己評価文章を生成"):
     if not performance:
         st.error(f"{selected_requirement} の実績が入力されていません。")
     else:
-        generated_evaluation = generate_evaluation(performance, {selected_requirement: grade_requirements[selected_grade][selected_requirement]})
-        if generated_evaluation:
-            generate_button_placeholder.empty()
+        st.session_state.generated_evaluation = generate_evaluation(performance, {selected_requirement: grade_requirements[selected_grade][selected_requirement]})
 
-if generated_evaluation:
-    if regenerate_button_placeholder.button("自己評価文章を生成しなおす"):
+if st.session_state.generated_evaluation:
+    if st.button("自己評価文章を生成しなおす"):
         evaluation_placeholder.empty()
-        regenerate_button_placeholder.empty()
-        generated_evaluation = generate_evaluation(performance, {selected_requirement: grade_requirements[selected_grade][selected_requirement]})
+        st.session_state.generated_evaluation = generate_evaluation(performance, {selected_requirement: grade_requirements[selected_grade][selected_requirement]})
                 
     if st.button("要件判定を実行"):
-        st.write(f"Debug: generated_evaluation: {generated_evaluation}")
+        st.write(f"Debug: generated_evaluation: {st.session_state.generated_evaluation}")
         with st.spinner("判定中..."):
-            result = assess_performance(generated_evaluation, grade_requirements[selected_grade][selected_requirement])
+            result = assess_performance(st.session_state.generated_evaluation, grade_requirements[selected_grade][selected_requirement])
             # Update the placeholder with the assessment result
             result_placeholder.subheader("判定結果")
             result_placeholder.write(result)
