@@ -58,7 +58,7 @@ try:
             key: value for key, value in requirements.items()
         }
 except KeyError:
-        st.error("grade_requirementsが設定されていません。")
+    st.error("grade_requirementsが設定されていません。")
     st.stop()
 
 # Streamlitアプリのレイアウト設定
