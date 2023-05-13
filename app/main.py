@@ -20,7 +20,7 @@ def generate_self_evaluation(performance, requirement):
         max_tokens=1000,
         n=1,
         stop=None,
-        temperature=0.5,
+        temperature=0.1,
     )
     
     return response.choices[0].text.strip()
@@ -35,7 +35,7 @@ def assess_performance(performance, requirement):
         max_tokens=1000,
         n=1,
         stop=None,
-        temperature=0.5,
+        temperature=0.1,
     )
     return response.choices[0].text.strip()
 
@@ -86,8 +86,6 @@ generated_evaluation = ""
 # Placeholder
 evaluation_placeholder = st.empty()
 result_placeholder = st.empty()
-generate_button_placeholder = st.empty()
-regenerate_button_placeholder = st.empty()
 
 # セッションステートの初期化
 if "generated_evaluation" not in st.session_state:
@@ -98,9 +96,6 @@ if "show_generate_button" not in st.session_state:
 
 if "show_regenerate_button" not in st.session_state:
     st.session_state.show_regenerate_button = False
-
-evaluation_placeholder = st.empty()
-result_placeholder = st.empty()
 
 # generate_evaluation関数の定義
 def generate_evaluation(performance, requirements):
@@ -133,6 +128,7 @@ if st.session_state.generated_evaluation:
             st.session_state.generated_evaluation = generate_evaluation(performance, {selected_requirement: grade_requirements[selected_grade][selected_requirement]})
                     
     if st.button("要件判定を実行"):
+        st.write(f"Debug: generated_evaluation: {st.session_state.generated_evaluation}")
         with st.spinner("判定中..."):
             result = assess_performance(st.session_state.generated_evaluation, grade_requirements[selected_grade][selected_requirement])
             # Update the placeholder with the assessment result
