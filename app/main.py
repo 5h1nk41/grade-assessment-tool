@@ -79,12 +79,11 @@ if st.button("自己評価文章を生成"):
         with st.spinner("文章生成中..."):
             result = generate_self_evaluation({selected_requirement: performance}, {selected_requirement: grade_requirements[selected_grade][selected_requirement]})
             st.subheader("生成された自己評価文章")
-            split_result = result.split("自己評価文章:") # 文字列から「自己評価文章:」を取り除きます
-            if len(split_result) > 1:
-                self_evaluation_text = split_result[1].strip()  # 生成された文章を取り出して表示する
+            if result:
+                st.write(result.strip())
             else:
-                self_evaluation_text = "自己評価文章が生成されませんでした。"
-            st.write(self_evaluation_text)
+                st.write("自己評価文章が生成されませんでした。")
+
             
 # 要件判定ボタン
 if st.button("要件判定を実行"):
