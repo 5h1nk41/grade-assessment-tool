@@ -18,7 +18,7 @@ def generate_self_evaluation(performance, requirement):
         prompt=prompt,
         max_tokens=1000,
         n=1,
-        stop=["\n", "自己評価文章:"],
+        stop=None,
         temperature=0.5,
     )
     
